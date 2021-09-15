@@ -18,13 +18,14 @@ import android.os.AsyncTask;
 
 public class Network {
 
-    private String ip = "192.168.1.200";
+    private String ip = "192.168.18.3";
     private int port = 6666;
-    private Socket client;
-    private static ObjectInputStream reader;
+    private static Socket client;
+    public static ObjectInputStream reader;
     private static DataOutputStream writer;
     private Context context;
-    private ImageView imageView;
+    private static ImageView imageView;
+
 
 
     public static boolean connected = false;
@@ -35,7 +36,7 @@ public class Network {
         imageView = s;
         Log.d("Usu","initialized");
         new Connect().execute();
-        updateImg();
+
 
     }
 
@@ -57,7 +58,7 @@ public class Network {
 
                 reader = new ObjectInputStream(new BufferedInputStream(client.getInputStream()));
                 writer = new DataOutputStream(client.getOutputStream());
-
+                updateImg();
             }catch(Exception e){
                 error = true;
             }
@@ -73,14 +74,7 @@ public class Network {
             super();
             Log.d("Usum", "caleed");
             message = a;
-            try
-            {
-                writer.flush();
-                writer.writeBytes(message);
-            }catch(Exception e)
-            {
-                error = true;
-            }
+
         }
 
         @Override
@@ -99,6 +93,7 @@ public class Network {
         }
     }
 
+
     private class UpdateImage extends AsyncTask<Void,Void,Void>
     {
 
@@ -111,32 +106,57 @@ public class Network {
 
         @Override
         protected Void doInBackground(Void... voids) {
-                while(!error) {
-                    try {
+            while(!error) {
+                try {
 
-                        Log.d("Usu", "reading image");
-                        byte[] byteImage = (byte[]) reader.readObject();
-                        Log.d("Usu", "image received");
-                        Bitmap img = BitmapFactory.decodeByteArray(byteImage, 0, byteImage.length);
+                    Log.d("Usut", "reading image");
+                    byte[] byteImage = (byte[]) reader.readObject();
+                    Log.d("Usut", "image received");
+                    Bitmap img = BitmapFactory.decodeByteArray(byteImage, 0, byteImage.length);
 
-                        bla(img);
-                    } catch (Exception e) {
-                        error = true;
-                    }
+                    bla(img);
+                } catch (Exception e) {
+                    Log.d("Usut", "error");
+                    error = true;
                 }
+            }
 
             return null;
         }
 
     }
 
+    /*class ImageUpdater extends Thread{
+         public void run()
+         {
+             while(true)
+             {
+                 try {
+
+                     Log.d("Usut", "reading image");
+                     byte[] byteImage = (byte[]) reader.readObject();
+                     Log.d("Usut", "image received");
+                     Bitmap img = BitmapFactory.decodeByteArray(byteImage, 0, byteImage.length);
+
+                     bla(img);
+
+                 } catch (Exception e) {
+                     Log.d("Usut", "error");
+                     break;
+                 }
+             }
+        }
+    }*/
+
     public void updateImg()
     {
-        new UpdateImage().execute();
+        Log.d("Usut", "image thread called");
+        new UpdateImage().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        //new ImageUpdater().start();
     }
     public void Send(String s)
     {
-        new SendCoords(s).execute();
+        new SendCoords(s).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     private void bla(Bitmap i){
@@ -144,7 +164,9 @@ public class Network {
         ((Activity)context).runOnUiThread(new Runnable() {
             @Override
             public void run() {
+
                 imageView.setImageBitmap(img);
+
             }
         });
     }

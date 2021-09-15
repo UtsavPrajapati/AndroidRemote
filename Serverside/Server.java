@@ -62,8 +62,8 @@ public class Server{
 						Point pty = pt.getLocation();
 						String[] coords = g.split("&&",2);
 	
-						int x = (int) (pty.getX() + Float.parseFloat(coords[0])*+sens);
-						int y = (int) (pty.getY() + Float.parseFloat(coords[1])*+sens);
+						int x = (int) (pty.getX() + Float.parseFloat(coords[0])*sens);
+						int y = (int) (pty.getY() + Float.parseFloat(coords[1])*sens);
 					
 						Potato.mouseMove(x, y);
 						break;
@@ -86,6 +86,7 @@ public class Server{
 		
 			while(client.isConnected())
 			{
+				System.out.println("Sending Image");
 				try
 				{	
 					Rectangle rectangle = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
@@ -97,9 +98,9 @@ public class Server{
 					int y = MouseInfo.getPointerInfo().getLocation().y;
 
 					Graphics2D graphics2D =bufferedImage.createGraphics();
-					graphics2D.drawImage(cursor, x, y, 64, 64, null); 
+					graphics2D.drawImage(cursor, x, y, 32, 32, null); 
 					
-					//System.out.println("Sending Image");
+					
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
 					ImageIO.write(bufferedImage,"jpg",baos);
 					baos.flush();
@@ -108,6 +109,7 @@ public class Server{
 					writer.flush();
 				}catch(Exception e)
 				{
+					System.out.println("Error");
 					System.out.println(e);
 					break;
 				}  

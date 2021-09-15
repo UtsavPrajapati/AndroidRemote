@@ -5,16 +5,17 @@
     android:id="@+id/layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/holo_blue_light"
     android:gravity="center_horizontal"
     android:keepScreenOn="true"
-    android:orientation="vertical"
-    android:background="@android:color/holo_blue_light">
+    android:orientation="vertical">
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal">
+
         <Button
             android:id="@+id/L"
             android:layout_width="120dp"
